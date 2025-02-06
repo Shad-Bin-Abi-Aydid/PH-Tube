@@ -34,8 +34,7 @@ const displayData = (categories) => {
 };
 
 // Object demo from API. it add here to see and write codes.
-
-const demoCode = {
+/* const demoCode = {
     "category_id": "1001",
     "video_id": "aaab",
     "thumbnail": "https://i.ibb.co/QPNzYVy/moonlight.jpg",
@@ -55,7 +54,7 @@ const demoCode = {
 }
 
 
-
+*/
 
 // Create DisplayVideos
 const displayVideo = (videos) => {
@@ -66,16 +65,24 @@ const displayVideo = (videos) => {
     const card = document.createElement("div");
     card.classList = "card card-compact";
     card.innerHTML = `
-         <figure>
+         <figure class = "h-[200px]">
             <img
             src="${video.thumbnail}"
+            class = "h-full w-full object-cover"
             alt="Shoes" />
         </figure>
-        <div class="card-body">
-            <h2 class="card-title">Shoes!</h2>
-            <p>If a dog chews shoes whose shoes does he choose?</p>
-            <div class="card-actions justify-end">
-            <button class="btn btn-primary">Buy Now</button>
+        <div class="px-0 py-2 flex gap-2">
+            <div>
+              <img class = "h-10 w-10 rounded-full object-cover" src =${video.authors[0].profile_picture} />
+            </div>
+
+            <div>
+              <h2 class = "font-bold">${video.title}</h2>
+              <div class = "flex gap-2 items-center">
+                <p class = "text-gray-500">${video.authors[0].profile_name}</p>
+                <img class = "h-5 w-5" src="https://img.icons8.com/?size=100&id=D9RtvkuOe31p&format=png&color=000000" />
+              </div>
+              <p class = "text-gray-500">${video.others.views} Views</p>
             </div>
         </div>
         `;
