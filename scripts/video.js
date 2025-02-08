@@ -1,6 +1,8 @@
 
-// Date formating (Hours, minutes, second) and Showing
+// Category Button color change
 
+
+// Date formating (Hours, minutes, second) and Showing
 function getTimeString(time){
   const hours = parseInt(time / 3600);
   let remainingSecond = time % 3600;
@@ -35,7 +37,22 @@ const loadCategoryVideos = (id) =>{
   // fetch the data
   fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
     .then((res) => res.json())
-    .then((data) => displayVideo(data.category))
+    .then((data) => {
+
+      // remove the active button class if there have any
+      const activeBtnClass = document.getElementsByClassName("categoryBtn");
+      for(let actBtn of activeBtnClass){
+        actBtn.classList.remove("bg-[red]", "text-white");
+      }
+      
+      // Select the button dynamically and add special style for active button.
+      const activeBtn = document.getElementById(`btn-${id}`);
+      activeBtn.classList.add("bg-[red]", "text-white");
+
+
+      // Call the displayVideo function to show the videos.
+      displayVideo(data.category)
+    })
     .catch((error) => console.log(error));
 }
 
@@ -50,7 +67,7 @@ const displayData = (categories) => {
 
     buttonContainer.innerHTML = 
     `
-      <button onClick = "loadCategoryVideos(${item.category_id})" class="btn">${item.category} </button>
+      <button id="btn-${item.category_id}" onClick = "loadCategoryVideos(${item.category_id})" class="btn categoryBtn">${item.category} </button>
     `;
     
     
