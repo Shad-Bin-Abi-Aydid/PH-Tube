@@ -1,15 +1,14 @@
-
 // Category Button color change
 
-
 // Date formating (Hours, minutes, second) and Showing
-function getTimeString(time){
+function getTimeString(time) {
   const hours = parseInt(time / 3600);
   let remainingSecond = time % 3600;
-  const minute = parseInt( remainingSecond / 60);
+  const minute = parseInt(remainingSecond / 60);
   remainingSecond = minute % 60;
 
-  return `${hours}hr ${minute}min ${remainingSecond}sc ago`;s
+  return `${hours}hr ${minute}min ${remainingSecond}sc ago`;
+  s;
 }
 
 // Fetch, Load and show categories on html
@@ -24,37 +23,35 @@ const loadCategories = () => {
 };
 
 // Create LoadVideos
-const loadVideos = () => {
+const loadVideos = (searchText="") => {
   // fetch the data
-  fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title= ${searchText}`)
     .then((res) => res.json())
     .then((data) => displayVideo(data.videos))
     .catch((error) => console.log(error));
 };
 
-// Load Category videos 
-const loadCategoryVideos = (id) =>{
+// Load Category videos
+const loadCategoryVideos = (id) => {
   // fetch the data
   fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
     .then((res) => res.json())
     .then((data) => {
-
       // remove the active button class if there have any
       const activeBtnClass = document.getElementsByClassName("categoryBtn");
-      for(let actBtn of activeBtnClass){
+      for (let actBtn of activeBtnClass) {
         actBtn.classList.remove("bg-[red]", "text-white");
       }
-      
+
       // Select the button dynamically and add special style for active button.
       const activeBtn = document.getElementById(`btn-${id}`);
       activeBtn.classList.add("bg-[red]", "text-white");
 
-
       // Call the displayVideo function to show the videos.
-      displayVideo(data.category)
+      displayVideo(data.category);
     })
     .catch((error) => console.log(error));
-}
+};
 
 // Create DisplayCategories
 const displayData = (categories) => {
@@ -65,16 +62,39 @@ const displayData = (categories) => {
     console.log(item.category_id);
     const buttonContainer = document.createElement("div");
 
-    buttonContainer.innerHTML = 
-    `
+    buttonContainer.innerHTML = `
       <button id="btn-${item.category_id}" onClick = "loadCategoryVideos(${item.category_id})" class="btn categoryBtn">${item.category} </button>
     `;
-    
-    
+
     // add button to category container
     categoryContainer.append(buttonContainer);
   });
 };
+
+// Load Details button information
+const loadDetails = async(videoId) =>{
+  
+  // Fetch data (this time we fetch data async way)
+  const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`
+  const res = await fetch(uri);
+  const data = await res.json();
+  displayDetails(data.video);
+}
+
+// Display the information of Details button
+const displayDetails = (video)=>{
+  console.log(video);
+  const detailContainer = document.getElementById("modal-content");
+  detailContainer.innerHTML = `
+      <img src="${video.thumbnail}" />
+      <p class = "mt-4">${video.description}</p>
+  `
+  // way-1 to show the modal
+  // document.getElementById("showModalData").click();
+
+  // way-2 to show the modal
+  document.getElementById("customModal").showModal();
+}
 
 // Object demo from API. it add here to see and write codes.
 /* const demoCode = {
@@ -101,13 +121,13 @@ const displayData = (categories) => {
 
 // Create DisplayVideos
 const displayVideo = (videos) => {
- // console.log(videos);
+  // console.log(videos);
 
   const videoContainer = document.getElementById("videos");
   videoContainer.innerHTML = "";
 
-  // check data is available or not 
-  if(videos.length == 0){
+  // check data is available or not
+  if (videos.length == 0) {
     // remove the grid from classList to show the html in middle
     videoContainer.classList.remove("grid");
 
@@ -117,10 +137,9 @@ const displayVideo = (videos) => {
         <img src = "assets/Icon.png" />
         <h2 class = "font-bold text-2xl">Oops!! Sorry, There is no content here</h2>
       </div>
-    `
+    `;
     return;
-  }
-  else{
+  } else {
     // added the grid again otherwise all categories videos showing column by column
     videoContainer.classList.add("grid");
   }
@@ -137,7 +156,9 @@ const displayVideo = (videos) => {
             ${
               video.others.posted_date?.length == 0
                 ? ""
-                : `<span class = "absolute right-2 bottom-2 bg-black text-white p-2 rounded-lg text-xs"> ${getTimeString(video.others.posted_date)}</span>`
+                : `<span class = "absolute right-2 bottom-2 bg-black text-white p-2 rounded-lg text-xs"> ${getTimeString(
+                    video.others.posted_date
+                  )}</span>`
             }
             
         </figure>
@@ -160,12 +181,17 @@ const displayVideo = (videos) => {
                 
               </div>
               <p class = "text-gray-500">${video.others.views} Views</p>
+              <p> <button onClick = "loadDetails('${video.video_id}')"  class="btn btn-sm btn-error text-white mt-2">Details</button> </p>
             </div>
         </div>
         `;
     videoContainer.append(card);
   });
 };
+
+document.getElementById("searchText").addEventListener("keyup", (e)=>{
+  loadVideos(e.target.value);
+})
 
 loadCategories();
 loadVideos();
